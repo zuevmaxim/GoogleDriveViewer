@@ -1,15 +1,15 @@
 package example
 
-import khttp.async.Companion.post
+import khttp.post
 
 class AuthRequest {
 
     private fun authCodeUrl(codeChallenge: String) = """
         https://accounts.google.com/o/oauth2/v2/auth?
-        scope=email%20profile&
+        scope=https://www.googleapis.com/auth/drive.readonly&
         response_type=code&
         state=security_token%3D138r5719ru3e1%26url%3Dhttps%3A%2F%2Foauth2.example.com%2Ftoken&
-        redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&
+        redirect_uri=http://localhost&
         client_id=$CLIENT_ID&
         code_challenge=$codeChallenge
     """.trimIndent().split("\n").joinToString("")
@@ -19,8 +19,18 @@ class AuthRequest {
         runtime.exec("firefox ${authCodeUrl(challenge)}").waitFor()
     }
 
-    fun accessToken(codeChallenge: String, authCode: String, callback: (String) -> Unit) {
-
+    fun accessToken(codeChallenge: String, authCode: String): String {
+        val response = post(
+            "https://oauth2.googleapis.com/token", data = hashMapOf(
+                "code" to authCode,
+                "client_id" to CLIENT_ID,
+                "client_secret" to CLIENT_SECRET,
+                "redirect_uri" to "http://localhost",
+                "grant_type" to "authorization_code",
+                "code_verifier" to codeChallenge
+            )
+        )
+        return response.jsonObject["access_token"] as String
     }
 
     companion object {
