@@ -33,6 +33,8 @@ class AuthRequest {
         return response.jsonObject["access_token"] as String
     }
 
+    fun clientId() = CLIENT_ID
+
     companion object {
         private const val CLIENT_ID = ""
         private const val CLIENT_SECRET = ""

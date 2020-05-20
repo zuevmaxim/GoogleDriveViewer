@@ -14,6 +14,6 @@ class GoogleDriveClient(private val apiKey : String, private val accessToken : S
         val obj : JSONObject = response.jsonObject
         return obj.getJSONArray("items")
             .toList()
-            .map { item -> JSONObject(item)["title"].toString() }
+            .map { item -> (item as JSONObject)["title"].toString() }
     }
 }

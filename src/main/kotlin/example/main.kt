@@ -18,5 +18,9 @@ fun main() {
     val authCode = readLine()!!
 
     val token = auth.accessToken(codeChallenge, authCode)
-    println(token)
+    val client = GoogleDriveClient(auth.clientId(), token)
+    val files = client.getAllFiles()
+    files.forEach {
+        println(it)
+    }
 }
